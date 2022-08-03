@@ -6,7 +6,7 @@ library(openxlsx)
 require(lubridate)
 
 # Definindo o ambiente de trabalho
-# Caminho relativo que vai dereto à pasta em que está os arquivos a serem trabalhados
+# Caminho relativo que vai dereto Ã  pasta em que estÃ¡ os arquivos a serem trabalhados
 
 setwd("../RESIDENTES/")
 
@@ -15,16 +15,16 @@ RESIDENTES_MULTI = read.xlsx("Dados/PERFIL_RESIDENTES.xlsx", sheet = 2, startRow
 
 #$ Criando coluna de identificador RESIDENTES, RESIDENTES_MULTI
 
-RESIDENTES$`tipo de residência` = "RESIDENTES"
-RESIDENTES_MULTI$`tipo de residência` = "RESIDENTES_MULTI"
+RESIDENTES$`tipo de residÃªncia` = "RESIDENTES"
+RESIDENTES_MULTI$`tipo de residÃªncia` = "RESIDENTES_MULTI"
 
 RESIDENTES <- rbind(RESIDENTES, RESIDENTES_MULTI)
 
 rm(RESIDENTES_MULTI)
 
-# Criando variável para contar os residentes
+# Criando variÃ¡vel para contar os residentes
 
-RESIDENTES$`Número de residentes` <- 1
+RESIDENTES$`NÃºmero de residentes` <- 1
 
 # Renomear as colunas 
 
@@ -38,7 +38,7 @@ RESIDENTES = RESIDENTES %>%
   rename(Residentes = RESIDENTES)
 
 RESIDENTES = RESIDENTES %>% 
-  rename(Ano = ANO.DE.RESIDÊNCIA)
+  rename(Ano = ANO.DE.RESIDÃŠNCIA)
 
 RESIDENTES = RESIDENTES %>% 
   rename(Status = STATUS)
@@ -50,5 +50,3 @@ RESIDENTES = RESIDENTES[sample(212), ]
 # Salvando
 
 save.image("RData/RESIDENTES.RData")
-
-#load("X:/USID/ESTAGIO_ESTATISTICA/0_Projetos_portifólio/RESIDENTES/RData/RESIDENTES.RData")
