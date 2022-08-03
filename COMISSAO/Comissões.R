@@ -6,36 +6,36 @@ library(openxlsx)
 require(lubridate)
 
 # Definindo o ambiente de trabalho
-# Caminho relativo que vai dereto à pasta em que está os arquivos a serem trabalhados
+# Caminho relativo que vai dereto Ã  pasta em que estÃ¡ os arquivos a serem trabalhados
 
 setwd("../COMISSAO/")
 
 # Lendo xlsx
 
-Comissao = read.xlsx("Comissões.xlsx", sheet = 1, detectDates = T)
-composicao = read.xlsx("Comissões.xlsx", sheet = 2)
+Comissao = read.xlsx("ComissÃµes.xlsx", sheet = 1, detectDates = T)
+composicao = read.xlsx("ComissÃµes.xlsx", sheet = 2)
 
-# Verificar se os nomes das comissões estão na base composicao
+# Verificar se os nomes das comissÃµes estÃ£o na base composicao
 
-table(Comissao$Nome %in% composicao$`Nome.-.Comissão`)
-table(composicao$`Nome.-.Comissão` %in% Comissao$Nome)
+table(Comissao$Nome %in% composicao$`Nome.-.ComissÃ£o`)
+table(composicao$`Nome.-.ComissÃ£o` %in% Comissao$Nome)
 
-# Renomeando as variáveis
+# Renomeando as variÃ¡veis
 
 composicao = 
   composicao %>%
   rename(
-    `Nome da comissão` = "Nome.-.Comissão",
+    `Nome da comissÃ£o` = "Nome.-.ComissÃ£o",
     `Membros` = "Nome.-.Membros",
     `Tipo de Membro` = "Tipo.-.Membro")
 
 Comissao = 
   Comissao %>%
   rename(
-    `Nome da comissão` = Nome,
+    `Nome da comissÃ£o` = Nome,
     `Data Portaria` = `Data.-.Portaria`,
-    `Data Boletim de Serviço` = `Data.-.Boletim.de.Serviço`,
-    `Regimento interno` = `Regimento.Interno.-.Boletim.de.Serviço`
+    `Data Boletim de ServiÃ§o` = `Data.-.Boletim.de.ServiÃ§o`,
+    `Regimento interno` = `Regimento.Interno.-.Boletim.de.ServiÃ§o`
     )
 
 names(Comissao) = gsub("\\.", " ", names(Comissao))
@@ -44,45 +44,45 @@ names(Comissao) = gsub("\\.", " ", names(Comissao))
 
 composicao = 
   composicao %>%
-  arrange(`Nome da comissão`, Membros)
+  arrange(`Nome da comissÃ£o`, Membros)
 
-#$ Identificando número de pessoas
+#$ Identificando nÃºmero de pessoas
 
 composicao = 
   composicao %>%
   mutate(
-    `Número de colaboradores em comissões` = if_else(duplicated(Membros), 0, 1)
+    `NÃºmero de colaboradores em comissÃµes` = if_else(duplicated(Membros), 0, 1)
   )
 
 # Criando ID para os membros
 
 composicao = 
   composicao %>%
-  mutate(`Código sequencial dos membros` = as.numeric(factor(Membros)))
+  mutate(`CÃ³digo sequencial dos membros` = as.numeric(factor(Membros)))
 
 composicao = 
   composicao %>%
   group_by(Membros) %>%
-  mutate(`Número de comissões por membro` = row_number()) %>%
+  mutate(`NÃºmero de comissÃµes por membro` = row_number()) %>%
   ungroup()
 
-composicao = data.table::setDT(composicao)[!is.na(Membros), "Número de membros por comissão" := data.table::rleid(Membros), "Nome da comissão"]
+composicao = data.table::setDT(composicao)[!is.na(Membros), "NÃºmero de membros por comissÃ£o" := data.table::rleid(Membros), "Nome da comissÃ£o"]
 
-# Criando Flag para contar comissões e colaboradores
+# Criando Flag para contar comissÃµes e colaboradores
 
 composicao = 
   composicao %>%
   mutate(
-    `Número de membros` = 1
+    `NÃºmero de membros` = 1
   )
 
 Comissao = 
   Comissao %>%
   mutate(
-    `Número de comissões` = 1
+    `NÃºmero de comissÃµes` = 1
   )
 
-# Duracao da data de criação da portaria até agora
+# Duracao da data de criaÃ§Ã£o da portaria atÃ© agora
 
 Comissao = 
   Comissao %>%
@@ -90,20 +90,20 @@ Comissao =
     `Data Portaria` = as.Date(`Data Portaria`, format = "%Y-%m-%d"),
     `Data Hoje` = Sys.Date()) %>%
   mutate(
-    `Duração em Mêses Decimal` = as.numeric(difftime(`Data Hoje`, `Data Portaria`, units = "days")/30)
+    `DuraÃ§Ã£o em MÃªses Decimal` = as.numeric(difftime(`Data Hoje`, `Data Portaria`, units = "days")/30)
   )
 
 Comissao = 
   Comissao %>%
   mutate(
-    `Duração em Mêses` = (interval(`Data Portaria`, `Data Hoje`)) %/% months(1)
+    `DuraÃ§Ã£o em MÃªses` = (interval(`Data Portaria`, `Data Hoje`)) %/% months(1)
     )
 
 # Alterar tipo do campo
 
 Comissao = 
   Comissao %>%
-  mutate(`Boletim de Serviço` = as.character(`Boletim de Serviço`))
+  mutate(`Boletim de ServiÃ§o` = as.character(`Boletim de ServiÃ§o`))
 
 #$ Reclassificar Regimento interno
 
@@ -111,7 +111,7 @@ Comissao = Comissao %>%
   mutate(`Regimento interno` = 
            case_when(
              `Regimento interno` == "Sim"  ~ "Sim",
-             TRUE ~ "Não")
+             TRUE ~ "NÃ£o")
          )
 
 # Extraindo amostra
@@ -122,14 +122,12 @@ Comissao = Comissao[sample(81), ]
 
 composicao = composicao[sample(708), ]
 
-# Retirar os valores NA da coluna nome da comissão
+# Retirar os valores NA da coluna nome da comissÃ£o
 
 Comissao =
   Comissao %>%
-  filter(!is.na(`Nome da comissão`))
+  filter(!is.na(`Nome da comissÃ£o`))
 
 # Salvando em RData
 
 save.image("Comissoes.RData")
-
-#load("X:/USID/ESTAGIO_ESTATISTICA/0_Projetos_portifólio/COMISSAO/Comissoes.RData")
